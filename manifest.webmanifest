@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "剧本杀小助手",
+  "short_name": "剧本杀小助手",
+  "description": "剧本杀线索整理笔记：思维导图 + 笔记，支持导出图片与离线存档",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
