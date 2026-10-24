@@ -2,7 +2,8 @@
 
 给剧本杀玩家用的**线索整理笔记**：思维导图 + 卡片笔记 + 时间线，打本时随手记，结束后一键导出精美长图和永久离线存档，年底拿来做「年度剧本杀总结」。
 
-- 计划发布地址（尚未发布）：<https://lwd619783-byte.github.io/jubensha-helper/>
+- 在线使用：<https://lwd619783-byte.github.io/jubensha-helper/>
+- 源码仓库：<https://github.com/lwd619783-byte/jubensha-helper>
 - 纯前端、无账号、无服务器：所有数据只保存在你自己的浏览器里（IndexedDB）
 - 打开过一次之后断网也能用；电脑、平板、手机（包括折叠屏）都有专门的布局
 
@@ -73,4 +74,14 @@ npm run build   # 生成 index.html、剧本杀小助手.html、sw.js、manifest
 
 ## Codex 接手发布
 
-请先阅读 `CODEX_PROMPT.md`。GitHub 连接此前因权限不足（403）未能创建仓库；本交付包不含任何登录信息，接手时应重新确认 GitHub CLI 登录与仓库状态。
+`CODEX_PROMPT.md` 保留原始交接要求，其中的 403 和未发布描述是交接时的历史状态。现已通过 GitHub CLI 完成公开仓库创建和 Pages 发布，来源为 **Deploy from a branch → main → / (root)**。
+
+发布验收已完成：
+
+- `npm ci`、`npm run build` 成功；未更改应用源码或依赖版本。
+- 线上首页及 PWA 资源返回 HTTP 200；manifest 和 Service Worker 均使用 `/jubensha-helper/` 子路径。
+- Chromium 桌面 1440px、手机触屏模拟 390px、平板触屏模拟 900px 布局已检查；手机导航和速记可用。未替代华为 Pura X Max 等具体设备的真机测试。
+- 新建、导图、速记、卡片编辑、人物、时间线、撤销/重做、复盘持久保存、PNG/HTML/JSON 导出、JSON 导入与保留两份、只读 HTML 存档已验证。
+- 桌面和手机模拟环境首次在线加载后，阻断浏览器网络，确认未缓存请求失败，应用仍可刷新；桌面已验证保存的数据仍可读取。
+
+验收使用独立浏览器中的虚构记录，未上传测试数据、截图、浏览器状态或个人游戏备份。日常仍请定期导出备份，跨设备通过 JSON 手动迁移。
