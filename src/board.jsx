@@ -149,6 +149,7 @@ export function canvasMenu(p) {
     { label: '新建主题', icon: 'target', fn: () => st.addFreeCard('topic', p) },
     { label: '新建分区', icon: 'frame', fn: () => st.addFrame([], p) },
     { label: '添加图片…', icon: 'image', fn: () => pickFiles((f) => st.addImageCards(f, { onBoard: true, at: p })) },
+    { label: 'AI 读卡构图…', icon: 'sparkle', fn: () => st.openModal('ai') },
     '-',
     { label: '一键整理', icon: 'wand', fn: () => st.tidyAll() },
     { label: '适应画布', icon: 'fit', kbd: '⌘0', fn: () => st.boardApi.current?.fit() },
@@ -451,6 +452,49 @@ export function Board() {
     for (const c of vis) { const p = c.parentId && rects.get(c.parentId); if (p) tree.push({ id: c.id, d: treePath(treeGeom(p, rects.get(c.id))) }); }
     const rel = [];
     for (const e of g.edges) { const a = rects.get(e.from), b = rects.get(e.to); if (a && b) rel.push({ e, ...relGeom(a, b) }); }
+    // 说明标签：沿连线找第一个不压卡片、不和别的标签叠在一起的位置
+    const placed = [];
+    const nearCard = (x, y) => {
+      for (const r of rects.values()) if (x > r.x - 30 && x < r.x + r.w + 30 && y > r.y - 6 && y < r.y + r.h + 6) return true;
+      return false;
+    };
+    const pointAt = (r, t) => {
+      if (!r.c) return { x: r.x1 + (r.x2 - r.x1) * t, y: r.y1 + (r.y2 - r.y1) * t };
+      const [cx1, cy1, cx2, cy2] = r.c;
+      const u = 1 - t;
+      return {
+        x: u * u * u * r.x1 + 3 * u * u * t * cx1 + 3 * u * t * t * cx2 + t * t * t * r.x2,
+        y: u * u * u * r.y1 + 3 * u * u * t * cy1 + 3 * u * t * t * cy2 + t * t * t * r.y2,
+      };
+    };
+    for (const r of rel) {
+      if (!r.e.label && r.e.style !== 'conflict') continue;
+      const mid = pointAt(r, 0.5);
+      const free = (p) => !placed.some((q) => Math.abs(q.x - p.x) < 96 && Math.abs(q.y - p.y) < 26) && !nearCard(p.x, p.y);
+      let spot = null;
+      for (const t of [0.5, 0.4, 0.6, 0.3, 0.7, 0.22, 0.78, 0.15, 0.85]) {
+        const p = pointAt(r, t);
+        if (free(p)) { spot = p; break; }
+      }
+      if (!spot) {
+        // 两条线挨得太近时，沿连线的法线再挪：先找既不压卡片也不叠标签的，再退一步只避开标签
+        const dx = r.x2 - r.x1, dy = r.y2 - r.y1, len = Math.hypot(dx, dy) || 1;
+        const nx = -dy / len, ny = dx / len;
+        let fallback = null, fallbackGap = -1;
+        for (const d of [22, -22, 38, -38, 56, -56, 80, -80]) {
+          const p = { x: mid.x + nx * d, y: mid.y + ny * d };
+          const labelClash = placed.some((q) => Math.abs(q.x - p.x) < 96 && Math.abs(q.y - p.y) < 26);
+          if (!labelClash && !nearCard(p.x, p.y)) { spot = p; break; }
+          const gap = placed.length ? Math.min(...placed.map((q) => Math.hypot(q.x - p.x, q.y - p.y))) : 999;
+          if (gap > fallbackGap) { fallbackGap = gap; fallback = p; }
+        }
+        if (!spot) spot = fallback;
+      }
+      spot = spot || mid;
+      r.mx = Math.round(spot.x);
+      r.my = Math.round(spot.y);
+      placed.push({ x: r.mx, y: r.my });
+    }
     const PAD = 300;
     const box = isFinite(x1) ? { x: Math.floor(x1 - PAD), y: Math.floor(y1 - PAD), w: Math.ceil(x2 - x1 + PAD * 2), h: Math.ceil(y2 - y1 + PAD * 2) } : null;
     return { rects, tree, rel, box };
@@ -504,6 +548,23 @@ export function Board() {
     if (!el || !r) return;
     const k = clamp(Math.max(vRef.current.k, minK), MINK, MAXK);
     setV({ k, x: el.clientWidth / 2 - (r.x + r.w / 2) * k, y: (el.clientHeight - bottomInset()) / 2 - (r.y + r.h / 2) * k }, true);
+  };
+  const focusBounds = (ids, minK = 0.5, pad = 72) => {
+    const el = wrap.current;
+    if (!el) return;
+    let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+    for (const id of ids) {
+      const c = st.card(id);
+      if (!c) continue;
+      const s = sz(c);
+      x1 = Math.min(x1, c.x); y1 = Math.min(y1, c.y);
+      x2 = Math.max(x2, c.x + s.w); y2 = Math.max(y2, c.y + s.h);
+    }
+    if (!isFinite(x1)) return;
+    const W = el.clientWidth, H = el.clientHeight, bi = bottomInset();
+    const bw = Math.max(1, x2 - x1), bh = Math.max(1, y2 - y1);
+    const k = clamp(Math.min((W - pad * 2) / bw, (H - pad * 2 - bi) / bh), minK, 1);
+    setV({ k, x: (W - bw * k) / 2 - x1 * k, y: Math.max(pad, (H - bi - bh * k) / 2) - y1 * k }, true);
   };
   const ensureVisible = (id) => {
     const el = wrap.current, r = rectById(id);
@@ -572,8 +633,12 @@ export function Board() {
   useEffect(() => () => { st.boardApi.current = null; }, []);
   useEffect(() => {
     if (!focusReq || Date.now() - focusReq.t > 1500) return;
-    const id = focusReq.id;
-    const t = setTimeout(() => focusCard(id), 60);
+    const ids = focusReq.ids && focusReq.ids.length ? focusReq.ids : focusReq.id ? [focusReq.id] : [];
+    if (!ids.length) return;
+    const t = setTimeout(() => {
+      if (ids.length > 1) focusBounds(ids);
+      else focusCard(ids[0]);
+    }, 60);
     return () => clearTimeout(t);
   }, [focusReq]);
   useEffect(() => {

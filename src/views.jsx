@@ -165,7 +165,11 @@ export function Library({ onDemo }) {
             <Icon name="chevR" size={16} />
           </button>
         )}
-        <div className="lib-foot muted small">数据只保存在本机浏览器。换设备或清理浏览器前，请在「数据与备份」中导出。</div>
+        <div className="lib-foot muted small">
+          数据只保存在本机浏览器。换设备或清理浏览器前，
+          {ro ? <span>请在「数据与备份」中导出。</span> : <button type="button" className="linkbtn" onClick={() => st.openModal('data')}>请在「数据与备份」中导出</button>}
+          。
+        </div>
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ function initTheme() {
   let t = ls.get('jbs-theme');
   if (t !== 'dark' && t !== 'light') { try { t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } catch { t = 'light'; } }
   document.documentElement.dataset.theme = t;
-  document.querySelector('meta[name=theme-color]')?.setAttribute('content', t === 'dark' ? '#191919' : '#ffffff');
+  document.querySelector('meta[name=theme-color]')?.setAttribute('content', t === 'dark' ? '#191816' : '#fdfcf9');
   return t;
 }
 function loadSettings() {

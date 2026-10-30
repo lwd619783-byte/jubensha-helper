@@ -49,10 +49,10 @@ const VERSION = pkg.version + '-' + createHash('sha256').update(js).update(css).
 
 /* ---------- HTML ---------- */
 // 首帧前确定深浅色，避免闪烁
-const THEME_INIT = "(function(){try{var t=localStorage.getItem('jbs-theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;if(t==='dark')document.querySelector('meta[name=theme-color]').setAttribute('content','#191919')}catch(e){}})()";
+const THEME_INIT = "(function(){try{var t=localStorage.getItem('jbs-theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;if(t==='dark')document.querySelector('meta[name=theme-color]').setAttribute('content','#191816')}catch(e){}})()";
 const page = (online) => '<!doctype html>\n<html lang="zh-CN"><head><meta charset="utf-8">'
   + '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">'
-  + '<meta name="theme-color" content="#ffffff">'
+  + '<meta name="theme-color" content="#fdfcf9">'
   + '<script>' + THEME_INIT + '</script>'
   + '<title>' + NAME + '</title>'
   + '<meta name="description" content="' + DESC + '">'
@@ -74,8 +74,8 @@ const manifest = {
   start_url: './',
   scope: './',
   display: 'standalone',
-  background_color: '#ffffff',
-  theme_color: '#ffffff',
+  background_color: '#fdfcf9',
+  theme_color: '#fdfcf9',
   icons: [
     { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
     { src: 'icon-maskable.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable' },

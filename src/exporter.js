@@ -8,8 +8,8 @@ import * as db from './db.js';
 
 /* ---------- 调色板（与 styles.css 保持一致） ---------- */
 export const PAL = {
-  light: { bg: '#ffffff', card: '#ffffff', line: 'rgba(55,53,47,0.16)', text: '#37352f', t2: '#73726e', t3: '#a5a4a0', chip: 'rgba(55,53,47,0.06)', shadow: 'rgba(15,15,15,0.08)', tree: 'rgba(55,53,47,0.26)', rel: '#5e6ad2', dash: '#9b9a97', red: '#e5484d', redBg: '#fdecec', accent: '#5e6ad2', topicT: '#ffffff', subBg: 'rgba(94,106,210,0.08)', subLine: 'rgba(94,106,210,0.32)' },
-  dark: { bg: '#191919', card: '#252525', line: 'rgba(255,255,255,0.11)', text: 'rgba(255,255,255,0.9)', t2: 'rgba(255,255,255,0.58)', t3: 'rgba(255,255,255,0.36)', chip: 'rgba(255,255,255,0.075)', shadow: 'rgba(0,0,0,0.35)', tree: 'rgba(255,255,255,0.24)', rel: '#8790ea', dash: '#8a8985', red: '#f0646a', redBg: '#3a2224', accent: '#6f7ae0', topicT: '#ffffff', subBg: 'rgba(124,134,230,0.14)', subLine: 'rgba(124,134,230,0.4)' },
+  light: { bg: '#fdfcf9', card: '#fffefb', line: 'rgba(58,50,36,0.17)', text: '#302b23', t2: '#6f695d', t3: '#a49c8d', chip: 'rgba(58,50,36,0.06)', shadow: 'rgba(40,34,24,0.08)', tree: 'rgba(58,50,36,0.24)', rel: '#5e6ad2', dash: '#9b9a97', red: '#e5484d', redBg: '#fdecec', accent: '#5e6ad2', topicT: '#ffffff', subBg: 'rgba(94,106,210,0.08)', subLine: 'rgba(94,106,210,0.32)' },
+  dark: { bg: '#191816', card: '#262421', line: 'rgba(255,248,236,0.12)', text: 'rgba(255,250,242,0.91)', t2: 'rgba(255,250,242,0.58)', t3: 'rgba(255,250,242,0.36)', chip: 'rgba(255,248,236,0.075)', shadow: 'rgba(0,0,0,0.35)', tree: 'rgba(255,248,236,0.24)', rel: '#8790ea', dash: '#8a8985', red: '#f0646a', redBg: '#3a2224', accent: '#6f7ae0', topicT: '#ffffff', subBg: 'rgba(124,134,230,0.14)', subLine: 'rgba(124,134,230,0.4)' },
 };
 const CHIP = { ev: '#7c4ddb', me: '#2f6fed', susp: '#e5484d', 'cred-high': '#0f9f6e', 'cred-mid': '#d97706', 'cred-fake': '#e5484d', ok: '#0f9f6e', todo: '#e5484d', conf: '#0e93b8' };
 
@@ -452,7 +452,7 @@ export async function archiveBlob(g) {
   const title = escHtml(bookTitle(g.title) + ' · 剧本杀小助手存档');
   const html = '<!doctype html>\n<html lang="zh-CN" data-theme="light"><head><meta charset="utf-8">'
     + '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">'
-    + '<meta name="theme-color" content="#ffffff"><title>' + title + '</title>'
+    + '<meta name="theme-color" content="#fdfcf9"><title>' + title + '</title>'
     + '<link rel="icon" href="' + ICON_DATA + '">'
     + '<style id="app-style">' + style + '</style></head><body><div id="root"></div>'
     + '<script id="jbs-archive" type="application/json">' + json + '<\/script>'
