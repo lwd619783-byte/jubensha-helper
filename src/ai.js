@@ -5,32 +5,37 @@
 const LS_KEY = 'jbs-ai';
 export const AI_PROVIDERS = [
   { id: 'deepseek', label: 'DeepSeek', base: 'https://api.deepseek.com/v1', hint: '填入支持图片的模型（可在 DeepSeek 控制台查看）' },
+  { id: 'openai', label: 'OpenAI', base: 'https://api.openai.com/v1', hint: 'gpt-4o / gpt-4.1 等支持图片的模型' },
   { id: 'zhipu', label: '智谱 GLM', base: 'https://open.bigmodel.cn/api/paas/v4', hint: 'GLM 视觉模型' },
   { id: 'qwen', label: '通义千问', base: 'https://dashscope.aliyuncs.com/compatible-mode/v1', hint: 'qwen-vl 系列' },
   { id: 'moonshot', label: '月之暗面', base: 'https://api.moonshot.cn/v1', hint: '视觉模型' },
-  { id: 'openai', label: 'OpenAI', base: 'https://api.openai.com/v1', hint: 'gpt-4.1-mini 等支持图片的模型' },
   { id: 'gemini', label: 'Gemini', base: 'https://generativelanguage.googleapis.com/v1beta/openai', hint: 'gemini 的 OpenAI 兼容接口' },
   { id: 'ark', label: '火山方舟', base: 'https://ark.cn-beijing.volces.com/api/v3', hint: '模型名填推理接入点 ID' },
   { id: 'ollama', label: '本机 Ollama', base: 'http://127.0.0.1:11434/v1', hint: '本机运行，不需要密钥；需设置 OLLAMA_ORIGINS=*' },
   { id: 'custom', label: '自定义', base: '', hint: '任何兼容 /chat/completions 的地址，可填自建代理' },
 ];
-const DEFAULTS = { provider: 'deepseek', base: AI_PROVIDERS[0].base, model: '', key: '', maxEdge: 1600 };
+const DEFAULTS = { provider: 'deepseek', base: AI_PROVIDERS[0].base, model: '', key: '', maxEdge: 1600, saved: {} };
 
 export function getAiCfg() {
   try {
     const raw = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
     const p = AI_PROVIDERS.find((x) => x.id === raw.provider) || AI_PROVIDERS[0];
     const base = typeof raw.base === 'string' ? raw.base : p.base;
-    return { ...DEFAULTS, provider: p.id, base, model: String(raw.model || ''), key: String(raw.key || ''), maxEdge: +raw.maxEdge || DEFAULTS.maxEdge };
+    const saved = raw.saved && typeof raw.saved === 'object' && !Array.isArray(raw.saved) ? raw.saved : {};
+    return { ...DEFAULTS, provider: p.id, base, model: String(raw.model || ''), key: String(raw.key || ''), maxEdge: +raw.maxEdge || DEFAULTS.maxEdge, saved };
   } catch {
-    return { ...DEFAULTS };
+    return { ...DEFAULTS, saved: {} };
   }
 }
 export function saveAiCfg(patch) {
-  const next = { ...getAiCfg(), ...patch };
+  const prev = getAiCfg();
+  const next = { ...prev, ...patch };
+  // 每个服务商各存一份地址/模型/密钥，切回来不用重填；顶层的 provider/base/model/key 仍是当前生效的一份
+  next.saved = { ...prev.saved, [next.provider]: { base: next.base, model: next.model, key: next.key } };
   try { localStorage.setItem(LS_KEY, JSON.stringify(next)); } catch {}
   return next;
 }
+export const savedCfgOf = (provider, c = getAiCfg()) => (c.saved && c.saved[provider]) || null;
 export const aiReady = (c = getAiCfg()) => !!c.base.trim() && !!c.model.trim() && (!!c.key.trim() || c.provider === 'ollama' || c.provider === 'custom');
 
 /* ---------- 错误 ---------- */

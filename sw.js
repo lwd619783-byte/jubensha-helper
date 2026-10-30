@@ -1,5 +1,5 @@
 // 剧本杀小助手 · Service Worker（由 build.mjs 生成）
-const CACHE = 'jbs-1.1.0-0c151d424c';
+const CACHE = 'jbs-1.1.0-0839838c3b';
 const ASSETS = ['./', './manifest.webmanifest', './icon.svg', './icon-maskable.svg'];
 const SCOPE = self.registration.scope;
 const SHELL = new Set([SCOPE, SCOPE + 'index.html']);

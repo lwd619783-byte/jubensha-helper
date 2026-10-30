@@ -32,8 +32,13 @@ export function AiConfigForm({ onDone, onCancel }) {
     const p = AI_PROVIDERS.find((x) => x.id === id);
     setModels([]);
     setMsg(null);
-    setF((x) => ({ ...x, provider: id, base: id === 'custom' ? x.base : p.base }));
+    setF((x) => {
+      const mem = x.saved?.[id];
+      if (mem) return { ...x, provider: id, base: mem.base || p.base, model: mem.model || '', key: mem.key || '' };
+      return { ...x, provider: id, base: id === 'custom' ? x.base : p.base, model: '', key: '' };
+    });
   };
+  const savedCount = Object.keys(f.saved || {}).length;
 
   const getModels = async () => {
     if (busy) return;
@@ -86,10 +91,13 @@ export function AiConfigForm({ onDone, onCancel }) {
         <span className="ai-l">服务商</span>
         <div className="ai-prov">
           {AI_PROVIDERS.map((p) => (
-            <button type="button" key={p.id} className={cx('ai-prov-i', p.id === f.provider && 'on')} onClick={() => pickProv(p.id)}>{p.label}</button>
+            <button type="button" key={p.id} className={cx('ai-prov-i', p.id === f.provider && 'on')} onClick={() => pickProv(p.id)} title={f.saved?.[p.id]?.key ? '已保存过这个服务商的设置' : undefined}>
+              {p.label}
+              {f.saved?.[p.id]?.key ? <span className="ai-prov-dot" /> : null}
+            </button>
           ))}
         </div>
-        <span className="ai-sub">{prov.hint}</span>
+        <span className="ai-sub">{prov.hint}{savedCount ? '　切换服务商会自动带出它保存过的地址、模型和密钥。' : ''}</span>
       </div>
 
       <label className="ai-field">

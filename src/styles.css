@@ -1155,6 +1155,7 @@ html[data-layout="phone"] .pal{max-height:calc(100% - 8px)}
 .ai-prov-i { height: 31px; padding: 0 13px; border-radius: 8px; border: 1px solid var(--line2); color: var(--t2); font-size: 13px; white-space: nowrap; transition: background-color 0.12s, border-color 0.12s, color 0.12s; }
 .ai-prov-i:hover { border-color: var(--line); color: var(--text); }
 .ai-prov-i.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent-t); font-weight: 600; }
+.ai-prov-dot { display: inline-block; width: 5px; height: 5px; margin-left: 5px; border-radius: 50%; background: var(--green); vertical-align: middle; }
 .ai-keyrow, .ai-modelrow { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .ai-modelrow .in { flex: 1 1 auto; }
 .ai-modelrow .btn { flex: none; }
