@@ -8,6 +8,7 @@ import { SHORTS } from './inspector.jsx';
 import * as db from './db.js';
 import { gcImages } from './images.js';
 import { renderBoard, canvasBlob, download, shareFile, canShareFiles, safeName, backupBlob, archiveBlob, readImportFile, applyImport, conflictsOf, stampName, RATIOS } from './exporter.js';
+import { AiWizard, AiSettingsModal } from './aiwizard.jsx';
 
 /* ---------- 导入 ---------- */
 export async function importFile(file) {
@@ -46,6 +47,8 @@ export function Modals() {
     case 'data': return <DataModal />;
     case 'import': return <ImportModal m={m} />;
     case 'shortcuts': return <ShortcutsModal />;
+    case 'ai': return <AiWizard />;
+    case 'aiSettings': return <AiSettingsModal />;
     default: return null;
   }
 }

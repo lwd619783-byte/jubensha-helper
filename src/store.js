@@ -181,7 +181,7 @@ export function setSetting(k, v) {
 }
 export function setTheme(t) {
   document.documentElement.dataset.theme = t;
-  document.querySelector('meta[name=theme-color]')?.setAttribute('content', t === 'dark' ? '#191919' : '#ffffff');
+  document.querySelector('meta[name=theme-color]')?.setAttribute('content', t === 'dark' ? '#191816' : '#fdfcf9');
   try { localStorage.setItem('jbs-theme', t); } catch {}
   setS({ theme: t });
 }

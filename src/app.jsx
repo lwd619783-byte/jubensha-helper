@@ -98,6 +98,7 @@ function Sidebar({ g }) {
         <Icon name="chevD" size={14} className="muted" />
       </MenuButton>
       <button type="button" className="side-btn" onClick={() => setS({ palette: true })}><Icon name="search" size={15} /><span>搜索与命令</span><kbd>{kb('⌘K')}</kbd></button>
+      {!ro && <button type="button" className="side-btn side-ai" onClick={() => st.openModal('ai')}><Icon name="sparkle" size={15} /><span>AI 读卡</span><em className="ai-pill">AI</em></button>}
       {!ro && <button type="button" className="side-btn" onClick={() => setS({ quick: true })}><Icon name="zap" size={15} /><span>速记</span><kbd>N</kbd></button>}
       <div className="side-sec">
         {NAV.map((x) => (
@@ -124,6 +125,9 @@ function Sidebar({ g }) {
 function moreMenu(g) {
   const S = getS();
   return [
+    !S.readOnly && { label: 'AI 读卡构图', icon: 'sparkle', fn: () => st.openModal('ai') },
+    !S.readOnly && { label: 'AI 识图设置', icon: 'key', fn: () => st.openModal('aiSettings') },
+    '-',
     !S.readOnly && { label: '待整理', icon: 'inbox', fn: openInbox },
     { label: '导出…', icon: 'download', fn: () => st.openModal('export', { id: g.id }) },
     !S.readOnly && { label: '编辑本局信息', icon: 'pen', fn: () => st.openModal('gameInfo', { id: g.id }) },
@@ -142,6 +146,7 @@ function Rail({ g }) {
     <nav className="rail">
       <button type="button" className="rail-home" title="返回本库" onClick={st.goLibrary}><span className="gsw-badge" style={{ background: g.cover }}><Icon name="book" size={15} /></span></button>
       {!ro && <button type="button" className="rail-quick" title="速记 (N)" aria-label="速记" onClick={() => setS({ quick: true })}><Icon name="plus" size={20} sw={2.4} /></button>}
+      {!ro && <button type="button" className="rail-i rail-ai" title="AI 读卡构图" onClick={() => st.openModal('ai')}><Icon name="sparkle" size={19} /><span>AI</span></button>}
       {NAV.map((x) => (
         <button key={x.v} type="button" className={cx('rail-i', view === x.v && 'on')} onClick={() => st.setView(x.v)}>
           <Icon name={x.icon} size={19} /><span>{x.label}</span>
@@ -287,6 +292,7 @@ function QuickInner({ g, init }) {
           ) : <span className="muted small">{touch ? '点「记录」保存，可连续记录多条' : '回车记录 · Shift+回车 换行 · 可连续记录多条'}</span>}
         </div>
         <div className="q-foot">
+          <IconBtn icon="sparkle" title="AI 读卡构图" onClick={() => { setS({ quick: false }); st.openModal('ai'); }} />
           <IconBtn icon="camera" title="拍照" onClick={() => pickFiles((f) => st.addImageCards(f, view === 'board' && onBoard ? { onBoard: true } : {}), true)} />
           <IconBtn icon="image" title="添加图片" onClick={() => pickFiles((f) => st.addImageCards(f, view === 'board' && onBoard ? { onBoard: true } : {}))} />
           {view === 'board' && <Toggle value={onBoard} onChange={(v) => { setOnBoard(v); st.setSetting('quickOnBoard', v); }} label="直接上图" />}
@@ -315,6 +321,8 @@ function PaletteInner() {
     const cmds = [
       ...(inGame ? NAV.map((n) => ({ icon: n.icon, label: '前往：' + n.label, fn: () => st.setView(n.v) })) : []),
       inGame && !ro && { icon: 'zap', label: '速记', kbd: 'N', fn: () => setS({ quick: true }) },
+      inGame && !ro && { icon: 'sparkle', label: 'AI 读卡构图', fn: () => st.openModal('ai') },
+      { icon: 'key', label: 'AI 识图设置', fn: () => st.openModal('aiSettings') },
       ...(inGame && !ro ? TYPE_KEYS.map((t) => ({ type: t, label: '新建' + TYPES[t].label + '卡片', fn: () => { st.setView('board'); setTimeout(() => st.addFreeCard(t), 60); } })) : []),
       inGame && !ro && { icon: 'wand', label: '一键整理导图', fn: () => { st.setView('board'); setTimeout(() => st.tidyAll(), 60); } },
       inGame && !ro && { icon: 'inbox', label: '打开「待整理」', fn: openInbox },
